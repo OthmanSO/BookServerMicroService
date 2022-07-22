@@ -4,17 +4,23 @@ using BooksServer.API.Entities;
 
 namespace BooksServer.API.DbContexts
 {
-    public partial class BooksDbcontexst : DbContext 
+    public partial class BooksDbcontexst : DbContext
     {
         private const string ConnectionString = "Filename=Books.db";
-        private virtual DbSet<Books> books { get; set; }
-        protected void OnConfiuring (DbContextOptionsBuilder optionsBuilder)
+        public virtual DbSet<Books>? books { get; set; }
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlite(ConnectionString, options => 
+            optionsBuilder.UseSqlite(ConnectionString, options =>
             {
-                options.MigrationsAssembly( Assembly.GetExecutingAssembly().FullName);
+                options.MigrationsAssembly(Assembly.GetExecutingAssembly().FullName);
             });
-            base.OnConfiuring(optionsBuilder);
         }
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Books>(e =>
+            {
+                e.HasIndex(en => en.bookId);
+            });
+        } 
     }
 }

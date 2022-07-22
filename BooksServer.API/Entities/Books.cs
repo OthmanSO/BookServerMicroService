@@ -1,4 +1,6 @@
 using System;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 
 namespace BooksServer.API.Entities
@@ -6,12 +8,15 @@ namespace BooksServer.API.Entities
     public class Books 
     {
         [Key]
-        public Guid BookId { get; set; }
+        public Guid bookId { get; set; }
         [Required]
-        public int price { get; set; }
+        [MaxLength(200)]
+        public string? bookName;
         [Required]
-        public int quantity { get; set; }
+        public int? price { get; set; }
         [Required]
-        public string category { get; set; }
+        public int? quantity { get; set; }
+        [Required]
+        public string? category { get; set; }
     }
 }
