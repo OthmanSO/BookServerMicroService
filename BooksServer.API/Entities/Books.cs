@@ -5,13 +5,15 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace BooksServer.API.Entities
 {
+    [Table("Books")]
     public class Books 
     {
         [Key]
-        public Guid bookId { get; set; }
+        public int bookId { get; set; }
         [Required]
         [MaxLength(200)]
-        public string? bookName;
+        [Column("title")]
+        public string? title{ get; set; }
         [Required]
         public int? price { get; set; }
         [Required]
