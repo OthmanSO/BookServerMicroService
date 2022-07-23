@@ -19,5 +19,10 @@ namespace BooksServer.API.Repository
             return _context.Books
                 .Where(b => b.bookId == book).FirstOrDefault();
         }
+        public IEnumerable<Books> GetBookByCategory(string? category)
+        {
+            return _context.Books
+                .Where(b => b.category == category).ToList();
+        }
     }
 }
