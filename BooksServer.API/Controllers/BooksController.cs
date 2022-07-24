@@ -1,4 +1,5 @@
 using BooksServer.API.Repository;
+using BooksServer.API.Entities;
 using BooksServer.API.Models;
 using Microsoft.AspNetCore.Mvc;
 using AutoMapper;
@@ -48,6 +49,22 @@ namespace BooksServer.API.Controllers
                 return NotFound("No Books U dumb!");
             }
             return Ok(_mapper.Map<IEnumerable<BookAsItemDto>>(books));
+        }
+        [HttpPut("{id}")]
+        public IActionResult modifyBook(int id , BookAsInfoDto book)
+        {
+            if (id == null || book == null)
+            {
+                return NotFound();
+            }
+            var bookfromDb = _bookRepo.GetBook(id);
+            if (book == null)
+            {
+                return NotFound();
+            }
+            bookfromDb = _mapper.Map<Books>(book);
+            _bookRepo.UpdateBook(bookfromDb);
+            return Accepted();
         }
     }
 }

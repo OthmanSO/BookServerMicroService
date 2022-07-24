@@ -24,5 +24,14 @@ namespace BooksServer.API.Repository
             return _context.Books
                 .Where(b => b.category == category).ToList();
         }
+        public void UpdateBook(Books book)
+        {
+            var b = GetBook(book.bookId);
+            if(b!=null)
+            {
+                b.quantity = book.quantity;
+                _context.SaveChanges();
+            }
+        }
     }
 }
