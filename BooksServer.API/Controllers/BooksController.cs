@@ -25,10 +25,6 @@ namespace BooksServer.API.Controllers
         [HttpGet("{id}")]
         public IActionResult GetBookById(int id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
             var book = _bookRepo.GetBook(id);
             if (book == null)
             {
@@ -36,33 +32,25 @@ namespace BooksServer.API.Controllers
             }
             return Ok(_mapper.Map<BookAsInfoDto>(book));
         }
+
         [HttpGet("category/{category}")]
         public IActionResult GetBookByCategory(string? category)
         {
-            if (category == null)
-            {
-                return NotFound("category is null");
-            }
             var books = _bookRepo.GetBookByCategory(category);
-            if (books == null)
-            {
-                return NotFound("No Books U dumb!");
-            }
+            if (!books.Any())
+                return NotFound("No books found in this category");
+
             return Ok(_mapper.Map<IEnumerable<BookAsItemDto>>(books));
         }
+
         [HttpPut("{id}")]
-        public IActionResult modifyBook(int id , BookAsInfoDto book)
+        public async Task<ActionResult<BookAsInfoDto>> modifyBook(int id, [FromBody]BookAsInfoDto book)
         {
-            if (id == null || book == null)
-            {
-                return NotFound();
-            }
             var bookfromDb = _bookRepo.GetBook(id);
-            if (book == null)
-            {
+            if (bookfromDb == null)
                 return NotFound();
-            }
-            bookfromDb = _mapper.Map<Books>(book);
+
+            bookfromDb.quantity = book.quantity;
             _bookRepo.UpdateBook(bookfromDb);
             return Accepted();
         }

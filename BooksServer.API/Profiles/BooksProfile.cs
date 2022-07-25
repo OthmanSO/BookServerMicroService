@@ -13,11 +13,9 @@ namespace BooksServer.API.Profiles
                 .ForMember(
                     dest => dest.id, 
                     opt => opt.MapFrom(src => $"{src.bookId}")
-                )
-                .ForMember(
-                    dest => dest.title, 
-                    opt => opt.MapFrom(src => $"{src.title}"));
-            CreateMap<Entities.Books, Models.BookAsInfoDto>();  
+                );
+            CreateMap<Entities.Books, Models.BookAsInfoDto>();
+            CreateMap<Models.BookAsInfoDto , Entities.Books>();  
         }
     }
 }
