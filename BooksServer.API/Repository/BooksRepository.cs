@@ -24,5 +24,9 @@ namespace BooksServer.API.Repository
             return _context.Books
                 .Where(b => b.category == category).ToList();
         }
+        public  async void UpdateBook(Books book)
+        {   
+            await _context.SaveChangesAsync();
+        }
     }
 }
