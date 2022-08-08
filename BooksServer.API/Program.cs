@@ -31,4 +31,9 @@ app.UseAuthorization();
 
 app.MapControllers();
 
+app.UseUrls("http://0.0.0.0:5000");
 app.Run();
+                
+                
+
+       
