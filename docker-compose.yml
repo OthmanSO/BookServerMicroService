@@ -1,0 +1,15 @@
+version: "3"
+services:
+  catalog:
+    build: .
+    hostname: catalog
+    ports:
+     - "15000:5000"
+
+
+  catalog2:
+    build: .
+    hostname: catalog2
+    ports:
+     - "15001:5000"
+
