@@ -16,10 +16,12 @@ namespace BooksServer.API.Controllers
     {
         private readonly BooksRepository _bookRepo;
         private readonly IMapper _mapper;
-        public BooksController(BooksRepository br, IMapper mapper)
+        private readonly IBookSyncRepository _bookSync;
+        public BooksController(BooksRepository br, IBookSyncRepository bs, IMapper mapper)
         {
             _bookRepo = br ?? throw new ArgumentNullException(nameof(BooksRepository));
             _mapper = mapper ?? throw new ArgumentNullException(nameof(IMapper));
+            _bookSync = bs ?? throw new ArgumentNullException(nameof(IBookSyncRepository));
         }
 
         [HttpGet("{id}")]
@@ -28,7 +30,9 @@ namespace BooksServer.API.Controllers
             var book = _bookRepo.GetBook(id);
             if (book == null)
             {
-                return NotFound();
+                var err = new ErrorCode();
+                err.MessageError = "No books found";
+                return NotFound(err);
             }
             return Ok(_mapper.Map<BookAsInfoDto>(book));
         }
@@ -38,8 +42,11 @@ namespace BooksServer.API.Controllers
         {
             var books = _bookRepo.GetBookByCategory(category);
             if (!books.Any())
-                return NotFound("No books found in this category");
-
+            {
+                var err = new ErrorCode();
+                err.MessageError = "No books found in this category";
+                return NotFound(err);
+            }
             return Ok(_mapper.Map<IEnumerable<BookAsItemDto>>(books));
         }
 
@@ -48,8 +55,21 @@ namespace BooksServer.API.Controllers
         {
             var bookfromDb = _bookRepo.GetBook(id);
             if (bookfromDb == null)
-                return NotFound();
+            {
+                var err = new ErrorCode();
+                err.MessageError = "No books found";
+                return NotFound(err);
+            }
+            bookfromDb.quantity = book.quantity;
+            _bookRepo.UpdateBook(bookfromDb);
+            _bookSync.SyncOut(bookfromDb);
+            return Accepted();
+        }
 
+        [HttpPost()]
+        public async Task<ActionResult<BookAsInfoDto>> SyncBook([FromBody]Books book)
+        {
+            var bookfromDb = _bookRepo.GetBook(book.bookId);
             bookfromDb.quantity = book.quantity;
             _bookRepo.UpdateBook(bookfromDb);
             return Accepted();
