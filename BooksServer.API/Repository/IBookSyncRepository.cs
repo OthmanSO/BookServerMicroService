@@ -10,7 +10,7 @@ namespace BooksServer.API.Repository
 {
     public interface IBookSyncRepository
     {
-        [Post("/catalog/1")]
+        [Post("/api/books")]
         Task SyncOut([Body] Books book);
     }
 }
